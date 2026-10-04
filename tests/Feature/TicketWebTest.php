@@ -102,4 +102,36 @@ class TicketWebTest extends TestCase
 
         $response->assertNotFound();
     }
+
+    public function test_store_validation_errors_are_japanese(): void
+    {
+        $response = $this->post(route('tickets.store'), []);
+
+        $response->assertSessionHasErrors([
+            'category_id' => 'カテゴリを選択してください。',
+            'title' => 'タイトルを入力してください。',
+            'description' => '内容を入力してください。',
+            'priority' => '優先度を選択してください。',
+        ]);
+    }
+
+    public function test_index_ignores_array_status_filter(): void
+    {
+        $category = Category::factory()->create();
+        Ticket::factory()->create(['category_id' => $category->id, 'title' => '配列フィルタ確認']);
+
+        $this->get('/?status[]=open')->assertOk()->assertSee('配列フィルタ確認');
+        $this->get('/?status=bogus')->assertOk()->assertSee('配列フィルタ確認');
+    }
+
+    public function test_priority_selection_is_restored_after_validation_error(): void
+    {
+        $response = $this->followingRedirects()
+            ->from(route('tickets.index'))
+            ->post(route('tickets.store'), ['priority' => 'high']);
+
+        $response->assertOk();
+        $response->assertSee('<option value="high" selected>', false);
+        $response->assertDontSee('<option value="normal" selected>', false);
+    }
 }

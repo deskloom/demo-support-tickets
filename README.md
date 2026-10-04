@@ -27,7 +27,7 @@ cp .env.example .env          # Windows（cmd）は copy .env.example .env
 php artisan key:generate
 php artisan migrate           # SQLiteファイルが無ければ作成を確認されるので yes
 npm install && npm run build
-php artisan test              # 17件の自動テスト（Feature: Web/API/モデル）
+php artisan test              # 22件の自動テスト（Feature: Web/API/モデル）
 php artisan db:seed --class=TicketSeeder   # 架空データ5件を投入
 php artisan serve --port=8123 &
 node smoke-test.mjs           # 起動中のサーバーに対する9項目の追加検証
@@ -35,7 +35,7 @@ node smoke-test.mjs           # 起動中のサーバーに対する9項目の�
 
 PHP 8.3以上・Composer・Node.jsが必要です。
 
-`php artisan test`（17件・42アサーション）が確認する内容:
+`php artisan test`（22件・59アサーション）が確認する内容:
 - Web: 一覧表示・状態フィルタ・起票→詳細ページへのリダイレクト・バリデーションエラー（タイトル必須／カテゴリ存在チェック）・404
 - API: JSON形式の一覧・状態フィルタ・起票時201・バリデーションエラー時422（優先度不正／本文必須）
 - モデル: リレーション（`belongsTo`/`hasMany`）・スコープ・ビジネスロジック（`isOpen()`）

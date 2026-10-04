@@ -99,4 +99,21 @@ class TicketApiTest extends TestCase
         $response->assertUnprocessable();
         $response->assertJsonValidationErrors('description');
     }
+
+    public function test_api_validation_errors_are_japanese(): void
+    {
+        $response = $this->postJson('/api/tickets', []);
+
+        $response->assertUnprocessable();
+        $response->assertJsonPath('errors.category_id.0', 'カテゴリを選択してください。');
+        $response->assertJsonPath('errors.title.0', 'タイトルを入力してください。');
+    }
+
+    public function test_api_index_ignores_array_status_filter(): void
+    {
+        $category = Category::factory()->create();
+        Ticket::factory()->create(['category_id' => $category->id]);
+
+        $this->getJson('/api/tickets?status[]=open')->assertOk()->assertJsonCount(1, 'data');
+    }
 }

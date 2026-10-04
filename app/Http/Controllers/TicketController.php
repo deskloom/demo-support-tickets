@@ -13,15 +13,18 @@ class TicketController extends Controller
 {
     public function index(Request $request): View
     {
+        $status = $request->query('status');
+        $status = is_string($status) && in_array($status, Ticket::STATUSES, true) ? $status : null;
+
         $tickets = Ticket::with('category')
-            ->status($request->query('status'))
+            ->status($status)
             ->latest()
             ->get();
 
         return view('tickets.index', [
             'tickets' => $tickets,
             'categories' => Category::orderBy('name')->get(),
-            'currentStatus' => $request->query('status'),
+            'currentStatus' => $status,
         ]);
     }
 

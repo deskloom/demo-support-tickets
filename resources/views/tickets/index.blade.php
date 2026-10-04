@@ -74,9 +74,9 @@
                     @endforeach
                 </select>
                 <select name="priority" required class="rounded border border-slate-300 px-2 py-1">
-                    <option value="low">優先度: 低</option>
-                    <option value="normal" selected>優先度: 中</option>
-                    <option value="high">優先度: 高</option>
+                    <option value="low" @selected(old('priority', 'normal') === 'low')>優先度: 低</option>
+                    <option value="normal" @selected(old('priority', 'normal') === 'normal')>優先度: 中</option>
+                    <option value="high" @selected(old('priority', 'normal') === 'high')>優先度: 高</option>
                 </select>
                 <input name="assignee_name" placeholder="担当者（任意）" value="{{ old('assignee_name') }}" class="rounded border border-slate-300 px-2 py-1 sm:col-span-2">
                 <button type="submit" class="rounded bg-blue-600 px-3 py-1.5 text-white hover:bg-blue-700 sm:col-span-2">起票する</button>
