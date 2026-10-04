@@ -1,7 +1,7 @@
 # サポートチケット管理システム（デモ・架空データ）
 
 小規模なサポートチケット管理システムの制作例。Laravel（PHP）+ Eloquent ORM + Blade + Tailwind CSS で構築。
-**すべて架空データ**（シーダーで生成）で検証した自主制作例で、顧客案件としては表現しない。
+業務で受託した案件ではなく、**すべて架空データ**（シーダーで生成）で作成した自主制作のデモです。
 
 ## 機能
 - チケット一覧（タイトル・カテゴリ・優先度・状態・担当者）
@@ -23,15 +23,17 @@
 
 ```bash
 composer install
-npm install && npm run build
+cp .env.example .env          # Windows（cmd）は copy .env.example .env
 php artisan key:generate
-touch database/database.sqlite
-php artisan migrate
+php artisan migrate           # SQLiteファイルが無ければ作成を確認されるので yes
+npm install && npm run build
 php artisan test              # 17件の自動テスト（Feature: Web/API/モデル）
-php artisan db:seed --class=TicketSeeder
+php artisan db:seed --class=TicketSeeder   # 架空データ5件を投入
 php artisan serve --port=8123 &
 node smoke-test.mjs           # 起動中のサーバーに対する9項目の追加検証
 ```
+
+PHP 8.3以上・Composer・Node.jsが必要です。
 
 `php artisan test`（17件・42アサーション）が確認する内容:
 - Web: 一覧表示・状態フィルタ・起票→詳細ページへのリダイレクト・バリデーションエラー（タイトル必須／カテゴリ存在チェック）・404
@@ -41,6 +43,9 @@ node smoke-test.mjs           # 起動中のサーバーに対する9項目の�
 `smoke-test.mjs`は実際に起動したサーバーに対してAPI経由でチケットを作成し、一覧・詳細ページに反映されることを確認する（開発中に発見した実バグの回帰テストを含む: `Ticket::create()`が返す直後のモデルはDBのデフォルト値`status`列を自動反映しないため、`app/Models/Ticket.php`に明示的な既定値を追加して修正）。
 
 ブラウザでの表示は375px（モバイル）・768px（タブレット）・1280px（デスクトップ）の3幅で目視確認済み。
+
+## 対象範囲外
+- 認証・認可（ログイン・権限管理）は、このデモの対象外です（誰でもチケットを閲覧・起票できる構成）。
 
 ## ディレクトリ構成
 ```
