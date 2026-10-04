@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTicketRequest;
+use App\Http\Requests\UpdateTicketRequest;
 use App\Models\Category;
 use App\Models\Ticket;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +20,8 @@ class TicketController extends Controller
         $tickets = Ticket::with('category')
             ->status($status)
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return view('tickets.index', [
             'tickets' => $tickets,
@@ -40,5 +42,12 @@ class TicketController extends Controller
         $ticket = Ticket::create($request->validated());
 
         return redirect()->route('tickets.show', $ticket)->with('status', 'チケットを登録しました。');
+    }
+
+    public function update(UpdateTicketRequest $request, Ticket $ticket): RedirectResponse
+    {
+        $ticket->update($request->validated());
+
+        return redirect()->route('tickets.show', $ticket)->with('status', 'チケットを更新しました');
     }
 }

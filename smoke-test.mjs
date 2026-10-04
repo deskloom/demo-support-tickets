@@ -30,7 +30,7 @@ async function main() {
   assert(created.data.status === 'open', 'new ticket defaults to open status');
 
   const after = await (await fetch(base + '/api/tickets')).json();
-  assert(after.data.length === before.data.length + 1, 'ticket count increased by 1');
+  assert(after.meta.total === before.meta.total + 1, 'ticket count increased by 1');
 
   const filtered = await (await fetch(base + '/api/tickets?status=resolved')).json();
   assert(filtered.data.every((t) => t.status === 'resolved'), 'status filter only returns matching tickets');

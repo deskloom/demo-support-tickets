@@ -21,5 +21,29 @@
                 <dd>{{ $ticket->created_at->format('Y/m/d H:i') }}</dd>
             </dl>
         </div>
+
+        <form method="POST" action="{{ route('tickets.update', $ticket) }}" class="grid grid-cols-1 gap-3 rounded-lg border border-slate-200 bg-white p-4 sm:grid-cols-2">
+            @csrf
+            @method('PATCH')
+            <h2 class="text-lg font-semibold sm:col-span-2">状態・担当者を更新</h2>
+            <label class="text-sm text-slate-600">状態
+                <select name="status" required class="mt-1 block w-full rounded border border-slate-300 px-2 py-1 text-slate-900">
+                    @foreach (array_combine(\App\Models\Ticket::STATUSES, ['未対応', '対応中', '解決済み']) as $value => $label)
+                        <option value="{{ $value }}" @selected(old('status', $ticket->status) === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </label>
+            <label class="text-sm text-slate-600">担当者
+                <input name="assignee_name" placeholder="担当者（空欄で未割当）" value="{{ old('assignee_name', $ticket->assignee_name) }}" class="mt-1 block w-full rounded border border-slate-300 px-2 py-1 text-slate-900">
+            </label>
+            <button type="submit" class="rounded bg-blue-600 px-3 py-1.5 text-white hover:bg-blue-700 sm:col-span-2">更新する</button>
+            @if ($errors->any())
+                <ul class="sm:col-span-2 list-disc pl-5 text-sm text-red-600">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            @endif
+        </form>
     </div>
 @endsection

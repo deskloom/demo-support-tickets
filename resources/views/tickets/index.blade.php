@@ -4,9 +4,9 @@
 
 @section('content')
     <div class="space-y-6">
-        <section class="flex items-center justify-between">
-            <h1 class="text-xl font-bold">チケット一覧（{{ $tickets->count() }}件）</h1>
-            <div class="flex gap-2 text-sm">
+        <section class="flex flex-wrap items-center justify-between gap-2">
+            <h1 class="text-xl font-bold">チケット一覧（{{ $tickets->total() }}件）</h1>
+            <div class="flex gap-2 whitespace-nowrap text-sm">
                 @foreach (['' => 'すべて', 'open' => '未対応', 'in_progress' => '対応中', 'resolved' => '解決済み'] as $value => $label)
                     <a
                         href="{{ route('tickets.index', $value ? ['status' => $value] : []) }}"
@@ -30,13 +30,13 @@
                 <tbody class="divide-y divide-slate-100 bg-white">
                     @forelse ($tickets as $ticket)
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-2">
+                            <td class="min-w-48 px-4 py-2">
                                 <a href="{{ route('tickets.show', $ticket) }}" class="text-blue-600 hover:underline">{{ $ticket->title }}</a>
                             </td>
-                            <td class="px-4 py-2 text-slate-600">{{ $ticket->category->name }}</td>
+                            <td class="whitespace-nowrap px-4 py-2 text-slate-600">{{ $ticket->category->name }}</td>
                             <td class="px-4 py-2">
                                 <span @class([
-                                    'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium',
+                                    'inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium',
                                     'bg-slate-100 text-slate-700' => $ticket->priority === 'low',
                                     'bg-amber-100 text-amber-800' => $ticket->priority === 'normal',
                                     'bg-red-100 text-red-800' => $ticket->priority === 'high',
@@ -44,13 +44,13 @@
                             </td>
                             <td class="px-4 py-2">
                                 <span @class([
-                                    'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium',
+                                    'inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium',
                                     'bg-amber-100 text-amber-800' => $ticket->status === 'open',
                                     'bg-blue-100 text-blue-800' => $ticket->status === 'in_progress',
                                     'bg-emerald-100 text-emerald-800' => $ticket->status === 'resolved',
                                 ])>{{ ['open' => '未対応', 'in_progress' => '対応中', 'resolved' => '解決済み'][$ticket->status] }}</span>
                             </td>
-                            <td class="px-4 py-2 text-slate-600">{{ $ticket->assignee_name ?? '未割当' }}</td>
+                            <td class="whitespace-nowrap px-4 py-2 text-slate-600">{{ $ticket->assignee_name ?? '未割当' }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -60,6 +60,8 @@
                 </tbody>
             </table>
         </div>
+
+        {{ $tickets->links('pagination.japanese') }}
 
         <section>
             <h2 class="mb-2 text-lg font-semibold">チケットを起票</h2>

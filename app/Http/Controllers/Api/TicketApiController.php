@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTicketRequest;
+use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
 use App\Models\Ticket;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +21,8 @@ class TicketApiController extends Controller
         $tickets = Ticket::with('category')
             ->status($status)
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return TicketResource::collection($tickets);
     }
@@ -32,5 +34,12 @@ class TicketApiController extends Controller
         return (new TicketResource($ticket->load('category')))
             ->response()
             ->setStatusCode(201);
+    }
+
+    public function update(UpdateTicketRequest $request, Ticket $ticket): TicketResource
+    {
+        $ticket->update($request->validated());
+
+        return new TicketResource($ticket->load('category'));
     }
 }
